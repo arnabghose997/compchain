@@ -1,0 +1,12 @@
+syntax = "proto3";
+package compchain.compchain;
+
+import "gogoproto/gogo.proto";
+import "compchain/compchain/params.proto";
+
+option go_package = "github.com/arnabghose997/compchain/x/compchain/types";
+
+// GenesisState defines the compchain module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
