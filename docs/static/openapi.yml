@@ -4,10 +4,10 @@ info:
   name: ''
   description: ''
 paths:
-  /arnabghose997/compchain/compchain/params:
+  /arnabghose997/compchain/address/params:
     get:
       summary: Parameters queries the parameters of the module.
-      operationId: CompchainCompchainParams
+      operationId: CompchainAddressParams
       responses:
         '200':
           description: A successful response.
@@ -46474,10 +46474,10 @@ paths:
       tags:
         - Query
 definitions:
-  compchain.compchain.Params:
+  compchain.address.Params:
     type: object
     description: Params defines the parameters for the module.
-  compchain.compchain.QueryParamsResponse:
+  compchain.address.QueryParamsResponse:
     type: object
     properties:
       params:

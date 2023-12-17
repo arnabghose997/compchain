@@ -110,9 +110,9 @@ import (
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 	"github.com/spf13/cast"
 
-	compchainmodule "github.com/arnabghose997/compchain/x/compchain"
-	compchainmodulekeeper "github.com/arnabghose997/compchain/x/compchain/keeper"
-	compchainmoduletypes "github.com/arnabghose997/compchain/x/compchain/types"
+	compchainmodule "github.com/arnabghose997/compchain/x/address"
+	compchainmodulekeeper "github.com/arnabghose997/compchain/x/address/keeper"
+	compchainmoduletypes "github.com/arnabghose997/compchain/x/address/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/arnabghose997/compchain/app/params"
@@ -711,8 +711,8 @@ func New(
 	app.MountMemoryStores(memKeys)
 
 	// initialize BaseApp
-	anteHandler, err := ante.NewAnteHandler(
-		ante.HandlerOptions{
+	anteHandler, err := NewAnteHandler(
+		HandlerOptions{
 			AccountKeeper:   app.AccountKeeper,
 			BankKeeper:      app.BankKeeper,
 			SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),

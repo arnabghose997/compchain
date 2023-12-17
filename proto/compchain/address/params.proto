@@ -1,0 +1,12 @@
+syntax = "proto3";
+package compchain.address;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/arnabghose997/compchain/x/address/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}

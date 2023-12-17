@@ -3,8 +3,8 @@ package keeper
 import (
 	"testing"
 
-	"github.com/arnabghose997/compchain/x/compchain/keeper"
-	"github.com/arnabghose997/compchain/x/compchain/types"
+	"github.com/arnabghose997/compchain/x/address/keeper"
+	"github.com/arnabghose997/compchain/x/address/types"
 	tmdb "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"

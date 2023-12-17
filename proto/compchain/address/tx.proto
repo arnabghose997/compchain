@@ -1,0 +1,7 @@
+syntax = "proto3";
+package compchain.address;
+
+option go_package = "github.com/arnabghose997/compchain/x/address/types";
+
+// Msg defines the Msg service.
+service Msg {}
