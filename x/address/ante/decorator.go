@@ -1,11 +1,11 @@
 package ante
 
 import (
-	"fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	//sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	authztypes "github.com/cosmos/cosmos-sdk/x/authz"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
@@ -20,24 +20,47 @@ func NewAddressFundReceiveRestriction() AddressFundReceiveRestriction {
 func (afrr AddressFundReceiveRestriction) AnteHandle(
 	ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler,
 ) (sdk.Context, error) {
+	var totalMsgs []sdk.Msg
+
 	msgs := tx.GetMsgs()
 
-	// Loop through all transactions messages and look for any MsgSend or MsgMultiSend messages
-	// If found, check whether the reciever address ends with letter 's'
+	// Gather any authz MsgExec sub-messages of type MsgSend and MsgMultiSend for
+	// receiver address validation check
+	for _, msg := range msgs {
+		if authzExecMsg, ok := msg.(*authztypes.MsgExec); ok {
+			subMessages, err := authzExecMsg.GetMessages()
+			if err != nil {
+				return sdk.Context{}, nil
+			}
+			totalMsgs = append(totalMsgs, subMessages...)
+		} else {
+			totalMsgs = append(totalMsgs, msg)
+		}
+	}
+
+	if err := checkReceiverAddress(totalMsgs); err != nil {
+		return sdk.Context{}, err
+	}
+
+	return next(ctx, tx, simulate)
+}
+
+// checkReceiverAddress loops through all transactions messages and look for any MsgSend or MsgMultiSend messages
+// If found, check whether the reciever address ends with letter 's'
+func checkReceiverAddress(msgs []sdk.Msg) error {
 	for _, msg := range msgs {
 		switch m := msg.(type) {
 		case *banktypes.MsgSend:
 			if strings.HasSuffix(m.ToAddress, "s") {
-				return sdk.Context{}, fmt.Errorf("%v is barred from receiving funds because it ends with `s`", m.ToAddress)
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "%v is barred from receiving funds because it ends with `s`", m.ToAddress)
 			}
 		case *banktypes.MsgMultiSend:
 			for _, reciever := range m.Outputs {
 				if strings.HasSuffix(reciever.Address, "s") {
-					return sdk.Context{}, fmt.Errorf("%v is barred from receiving funds because it ends with 's'", reciever.Address)
+					return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "%v is barred from receiving funds because it ends with 's'", reciever.Address)
 				}
 			}
 		}
 	}
-
-	return next(ctx, tx, simulate)
+	return nil
 }
